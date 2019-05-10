@@ -1,6 +1,6 @@
 SEARCH_RESULTS_FN = 'search_results.json'
 NEW_GAMES_INFO_FN = 'new_game_info.json'
-MAX_NO_SEARCH_RESULT = 100
+MAX_NO_SEARCH_RESULT = 30
 TOKENIZER_PATH = 'tokenizer.pickle'
 MODEL_PATH = 'model_improvement-03-0.90.h5'
 CLASSIFIED_RESULT_FN = 'classified_result.json'
