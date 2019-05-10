@@ -14,10 +14,11 @@ from settings import *
 def main():
     nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
     # Get search link
-    search_url = 'https://store.steampowered.com/search/?tags=492%2C19&category1=998'
+    search_url = 'https://store.steampowered.com/search?tags=19%2C21&category1=998'
 
     # Search
     setting = get_project_settings()
+    setting['FEED_EXPORT_ENCODING'] = 'utf-8'
     configure_logging()
     runner = CrawlerRunner(setting)
     crawl(runner, search_url)
@@ -36,13 +37,13 @@ def main():
 
 
 def get_new_game_list(fn):
-    with open(fn, mode='r', encoding='utf8') as f:
+    with open(fn, mode='r') as f:
         game_list = json.load(f)
         f.close()
 
-    existed_link = select_link()
+    existed_game_name = select_name()
 
-    new_game_list = [game for game in game_list if game['url'] not in existed_link]
+    new_game_list = [game for game in game_list if game['name'] not in existed_game_name]
 
     return new_game_list
 

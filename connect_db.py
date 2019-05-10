@@ -80,15 +80,19 @@ def select_all():
         connection.close()
 
 
-def select_link():
+def select_name():
     try:
         connection = get_connect()
         with connection.cursor() as cs:
             query_select_link = """
-                select distinct url from classified_data
+                select distinct `name` from game_recommend.classified_data
             """
             cs.execute(query_select_link)
-            result = cs.fetchall()
+            result = []
+            
+            for a in cs.fetchall():
+                result.append(a[0])
+
             return result
     finally:
         connection.close()
@@ -158,10 +162,10 @@ def turn_to_matrix():
 
 if __name__ == '__main__':
     # drop_database()
-    # create_database()
-    # create_table_data()
-    # insert()
-    turn_to_matrix()
+    create_database()
+    create_table_data()
+    insert("/home/vudat1710/Downloads/game (1).json")
+    # turn_to_matrix()
     # print("end")
     # select_all()
-# select_link()
+    # select_name()

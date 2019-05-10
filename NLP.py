@@ -23,9 +23,9 @@ import underthesea
 
 from settings import CLASSIFIED_RESULT_FN
 
-nltk.download('words')
-nltk.download('wordnet')
-nltk.download('stopwords')
+# nltk.download('words')
+# nltk.download('wordnet')
+# nltk.download('stopwords')
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
 max_features = 100000
