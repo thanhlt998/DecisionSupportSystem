@@ -9,12 +9,13 @@ from connect_db import *
 from topsis import topsis
 from NLP import NLP
 from settings import *
+import os
 
 
 def main():
     nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
     # Get search link
-    search_url = 'https://store.steampowered.com/search?tags=19%2C21&category1=998'
+    search_url = 'https://store.steampowered.com/search?tags=19%2C9&category1=998'
 
     # Search
     setting = get_project_settings()
@@ -25,15 +26,22 @@ def main():
     reactor.run()
 
     # Classify
-    nlp.classify_comments(NEW_GAMES_INFO_FN)
+    if os.stat(NEW_GAMES_INFO_FN).st_size != 0:
+        nlp.classify_comments(NEW_GAMES_INFO_FN)
 
-    # Import new game into database
-    insert(CLASSIFIED_RESULT_FN)
+        # Import new game into database
+        insert(CLASSIFIED_RESULT_FN)
 
     # TOPSIS
     matrix = turn_to_matrix()
     result = topsis(matrix, len(matrix), TOPSIS_WEIGHT, NO_ATTRIBUTES)
     print('Result: ', result)
+    try:
+        os.remove(NEW_GAMES_INFO_FN)
+        os.remove("search_results.json")
+        os.remove("classified_result.json")
+    except FileNotFoundError:
+        print("")
 
 
 def get_new_game_list(fn):
