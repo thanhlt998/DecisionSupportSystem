@@ -87,7 +87,7 @@ class NLP:
     def classify_comments(self, json_path):
         comments = []
         # data2 = []
-        with open(json_path, "r") as f:
+        with open(json_path, mode="r", encoding='utf8') as f:
             data2 = json.load(f)
             for x in data2:
                 x['Total'] = len(x['comments'])
@@ -108,7 +108,7 @@ class NLP:
                         prediction[i] = False
                 x['Positive'] = str(int(np.sum(prediction)))
                 comments = []
-        f.close()
+            f.close()
         # print (data2)
         with open(CLASSIFIED_RESULT_FN, mode="w", encoding='utf8') as fi:
             json.dump(data2, fi)

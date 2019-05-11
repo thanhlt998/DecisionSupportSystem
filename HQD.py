@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.messagebox
+from settings import GAME_TAGS
 
 
 class CheckbuttonList(tk.LabelFrame):
@@ -26,38 +27,49 @@ class CheckbuttonList(tk.LabelFrame):
                     col = 0
 
 
-def find():
+def find(_range, _type, platform):
     a = _range.get()
     type_list = _type.cb_values
-    res = ""
+    res_types= []
     for k, v in type_list.items():
-        if (v.get()):
-            res += k
+        if v.get():
+            res_types.append(k)
 
-    tkinter.messagebox.showinfo("Result", res + a)
+    return get_search_link(res_types)
+
+    # tkinter.messagebox.showinfo("Result", f"{res}{a}")
 
 
-root = tk.Tk()
+# root = tk.Tk()
+#
+# root.geometry('550x250')
+# root.title("Game Picker")
+#
+# Type = GAME_TAGS.keys()
+# Platform = ["PC", "XBox", "PS"]
+#
+# _type = CheckbuttonList(root, "Type", Type)
+# _type.place(x=10, y=10)
+#
+# platform = CheckbuttonList(root, "Platform", Platform)
+# platform.place(x=10, y=100)
+#
+# price = tk.Label(root, text="max price($)")
+# price.place(x=10, y=150)
+# _range = tk.Scale(root, from_=0, to=1000, orient=tk.HORIZONTAL, length=500)
+# _range.place(x=10, y=170)
+#
+# submit = tk.Button(root, text="Find", command=find)
+# submit.place(x=10, y=220)
+#
+# root.mainloop()
 
-root.geometry('550x250')
-root.title("Game Picker")
 
-Type = ["Action", "Horor", "Puzzle", "FPS", "Indle", "Arcade", "Multiplayer", "Music", "More1", "More2", "More3",
-        "More4"]
-Platform = ["PC", "XBox", "PS"]
+def get_search_link(tag_list):
+    tag_id_list = [GAME_TAGS[tag] for tag in tag_list]
+    link = f"https://store.steampowered.com/search?tags={','.join(tag_id_list)}&category1=998"
+    return link
 
-_type = CheckbuttonList(root, "Type", Type)
-_type.place(x=10, y=10)
 
-platform = CheckbuttonList(root, "Platform", Platform)
-platform.place(x=10, y=100)
-
-price = tk.Label(root, text="max price($)")
-price.place(x=10, y=150)
-_range = tk.Scale(root, from_=0, to=1000, orient=tk.HORIZONTAL, length=500)
-_range.place(x=10, y=170)
-
-submit = tk.Button(root, text="Find", command=find)
-submit.place(x=10, y=220)
-
-root.mainloop()
+# if __name__ == '__main__':
+#     ui()

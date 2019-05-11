@@ -10,12 +10,15 @@ from topsis import topsis
 from NLP import NLP
 from settings import *
 import os
+import tkinter as tk
+from HQD import CheckbuttonList, get_search_link
 
 
-def main():
-    nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
+def process(search_url, price, platform_list):
+    print(search_url, price, platform_list)
+    # nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
     # Get search link
-    search_url = 'https://store.steampowered.com/search?tags=19%2C9&category1=998'
+    # search_url = 'https://store.steampowered.com/search?tags=19%2C9&category1=998'
 
     # Search
     setting = get_project_settings()
@@ -73,5 +76,49 @@ def crawl(runner, search_url):
     reactor.stop()
 
 
+def main():
+    root = tk.Tk()
+
+    root.geometry('550x250')
+    root.title("Game Picker")
+
+    Type = GAME_TAGS.keys()
+    Platform = ["PC", "XBox", "PS"]
+
+    _type = CheckbuttonList(root, "Type", Type)
+    _type.place(x=10, y=10)
+
+    platform = CheckbuttonList(root, "Platform", Platform)
+    platform.place(x=10, y=100)
+
+    price = tk.Label(root, text="max price($)")
+    price.place(x=10, y=150)
+    _range = tk.Scale(root, from_=0, to=1000, orient=tk.HORIZONTAL, length=500)
+    _range.place(x=10, y=170)
+
+    submit = tk.Button(root, text="Find", command=lambda: find(_range, _type, platform))
+    submit.place(x=10, y=220)
+
+    root.mainloop()
+
+
+def find(_range, _type, platform):
+    a = _range.get()
+    type_list = _type.cb_values
+    res_types = []
+    for k, v in type_list.items():
+        if v.get():
+            res_types.append(k)
+
+    platform_list = platform.cb_values
+    res_platforms = []
+    for k, v in platform_list.items():
+        if v.get():
+            res_platforms.append(k)
+
+    process(search_url=get_search_link(res_types), price=a, platform_list=res_platforms)
+
+
 if __name__ == '__main__':
+    nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
     main()
