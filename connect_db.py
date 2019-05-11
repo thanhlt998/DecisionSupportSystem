@@ -127,7 +127,7 @@ def insert(classified_result_fn):
                             ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');                  
                     """.format(str(x['url']), str(x['name']), float(x['price']) / 100, x['platform'],
                                float(x['metascore']), float(x['userscore']), int(x['Total']), int(x['Positive']))
-                    print(query_insert)
+                    # print(query_insert)
                     cs.execute(query_insert)
     finally:
         connection.close()
@@ -160,11 +160,11 @@ def turn_to_matrix():
         connection.close()
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # drop_database()
-    create_database()
-    create_table_data()
-    insert("/home/vudat1710/Downloads/game (1).json")
+    # create_database()
+    # create_table_data()
+    # insert("/home/vudat1710/Downloads/game (1).json")
     # turn_to_matrix()
     # print("end")
     # select_all()

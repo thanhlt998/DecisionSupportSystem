@@ -20,6 +20,10 @@ def main():
     # Search
     setting = get_project_settings()
     setting['FEED_EXPORT_ENCODING'] = 'utf-8'
+    setting['FEED_STORAGES_BASE'] = {
+        '': 'custom_report_file.CustomFileFeedStorage',
+        'file': 'custom_report_file.CustomFileFeedStorage',
+    }
     configure_logging()
     runner = CrawlerRunner(setting)
     crawl(runner, search_url)
@@ -36,12 +40,12 @@ def main():
     matrix = turn_to_matrix()
     result = topsis(matrix, len(matrix), TOPSIS_WEIGHT, NO_ATTRIBUTES)
     print('Result: ', result)
-    try:
-        os.remove(NEW_GAMES_INFO_FN)
-        os.remove("search_results.json")
-        os.remove("classified_result.json")
-    except FileNotFoundError:
-        print("")
+    # try:
+    #     os.remove(NEW_GAMES_INFO_FN)
+    #     os.remove("search_results.json")
+    #     os.remove("classified_result.json")
+    # except FileNotFoundError:
+    #     print("")
 
 
 def get_new_game_list(fn):
