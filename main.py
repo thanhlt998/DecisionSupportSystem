@@ -12,13 +12,16 @@ from settings import *
 import os
 import tkinter as tk
 from HQD import CheckbuttonList, get_search_link
+import operator
+import itertools
+import collections
 
+def take(n, iterable):
+    "Return first n items of the iterable as a list"
+    return list(islice(iterable, n))
 
 def process(search_url, price, platform_list):
     print(search_url, price, platform_list)
-    # nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
-    # Get search link
-    # search_url = 'https://store.steampowered.com/search?tags=19%2C9&category1=998'
 
     # Search
     setting = get_project_settings()
@@ -44,9 +47,18 @@ def process(search_url, price, platform_list):
         game_li = json.load(f)
         f.close()
     game_list = [game["name"] for game in game_li]
-    matrix = turn_to_matrix(game_list, platform_list, price)
+    print(len(game_list))
+    matrix, id_list = turn_to_matrix(game_list, platform_list, price)
     result = topsis(matrix, len(matrix), TOPSIS_WEIGHT, NO_ATTRIBUTES)
-    print('Result: ', result)
+    dictionary = dict(zip(id_list, result))
+    dictionary = sorted(dictionary.items(), key=operator.itemgetter(1), reverse=True)
+    d = collections.OrderedDict(dictionary)
+    x = itertools.islice(d.items(), 0, 4)
+    key_list = []
+    for key, value in x:
+        key_list.append(key)
+    res = select_game(key_list)
+    print (res)
     try:
         os.remove(NEW_GAMES_INFO_FN)
         os.remove("search_results.json")
@@ -97,7 +109,7 @@ def main():
 
     price = tk.Label(root, text="max price($)")
     price.place(x=10, y=150)
-    _range = tk.Scale(root, from_=0, to=1000, orient=tk.HORIZONTAL, length=500)
+    _range = tk.Scale(root, from_=0, to=200, orient=tk.HORIZONTAL, length=500)
     _range.place(x=10, y=170)
 
     submit = tk.Button(root, text="Find", command=lambda: find(_range, _type, platform))
@@ -121,15 +133,6 @@ def find(_range, _type, platform):
             res_platforms.append(k)
 
     process(search_url=get_search_link(res_types), price=a, platform_list=res_platforms)
-
-# def get_params(_range, platform):
-#     platform_list = platform.cb_values
-#     res_platforms = []
-#     for k, v in platform_list.items():
-#         if v.get():
-#             res_platforms.append(k)
-#     return (_range.get(), res_platforms)
-
 
 if __name__ == '__main__':
     nlp = NLP(TOKENIZER_PATH, MODEL_PATH)

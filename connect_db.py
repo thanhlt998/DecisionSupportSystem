@@ -136,16 +136,12 @@ def turn_to_matrix(game_list, platform_list, price):
     try:
         connection = get_connect()
         with connection.cursor() as cs:
-            # query = "select * from game_recommend.classified_data where `platform` = '{}' and `price` between '{}' and '{}'"
-            # a_list = ['Dota 2', 'Counter-Strike: Global Offensive', "PLAYERUNKNOWN'S BATTLEGROUNDS", "Tom Clancy's Rainbow Six® Siege"]
-            # b_list = ['PC', 'XONE']
-            # c = 100
-            
             placeholders1 = ','.join('%s' for i in game_list)
             placeholders2 = ','.join('%s' for i in platform_list)
             query = "select * from game_recommend.classified_data where `name` in ({}) and `platform` in ({}) and `price` <= {};".format(placeholders1, placeholders2, price)
             cs.execute(query, game_list + platform_list)
             matrix = []
+            id_list = []
             for row in cs:
                 avg_score = (float(row[5]) / 10 + float(row[6])) / 2
                 if float(row[7]) != 0:
@@ -153,9 +149,26 @@ def turn_to_matrix(game_list, platform_list, price):
                 else:
                     pos = 0
                 matrix.append([float(row[3]), avg_score, float(row[7]), pos])
-            print (matrix)
-            return matrix
+                id_list.append(row[0])
+            print(cs.rowcount)
+            return (matrix, id_list)
 
+    finally:
+        connection.close()
+
+def select_game(id_list):
+    try:
+        connection = get_connect()
+        with connection.cursor() as cs:
+            placeholders = ','.join('%s' for i in id_list)
+            query = "select * from game_recommend.classified_data where `id` in ({});".format(placeholders)
+            cs.execute(query, id_list)
+            result = []
+
+            for a in cs.fetchall():
+                result.append(a)
+
+            return result
     finally:
         connection.close()
 
