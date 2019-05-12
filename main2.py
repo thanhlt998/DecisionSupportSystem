@@ -22,20 +22,18 @@ def take(n, iterable):
     return list(islice(iterable, n))
 
 
-def process(search_url, price, platform_list):
+def process(price, platform_list):
     print(search_url, price, platform_list)
 
     # Search
-    setting = get_project_settings()
-    setting['FEED_EXPORT_ENCODING'] = 'utf-8'
-    setting['FEED_STORAGES_BASE'] = {
-        '': 'custom_report_file.CustomFileFeedStorage',
-        'file': 'custom_report_file.CustomFileFeedStorage',
-    }
-    configure_logging()
-    runner = CrawlerRunner(setting)
-    crawl(runner, search_url)
-    reactor.run()
+    # yield runner.crawl(SearchResultsCrawler, name="search_crawler", search_url=search_url,
+    #                    output_file_name=SEARCH_RESULTS_FN)
+    #
+    # # Load new game list
+    # new_game_list = get_new_game_list(SEARCH_RESULTS_FN)
+    #
+    # yield runner.crawl(NewGameInfoCrawler, name="new_game_info_crawler", new_game_list=new_game_list,
+    #                    output_file_name=NEW_GAMES_INFO_FN)
 
     # Classify
     if os.stat(NEW_GAMES_INFO_FN).st_size != 0:
@@ -61,12 +59,6 @@ def process(search_url, price, platform_list):
         key_list.append(key)
     res = select_game(key_list)
     print(res)
-    try:
-        os.remove(NEW_GAMES_INFO_FN)
-        os.remove("search_results.json")
-        os.remove("classified_result.json")
-    except FileNotFoundError:
-        print("")
 
 
 def get_new_game_list(fn):
@@ -82,15 +74,42 @@ def get_new_game_list(fn):
 
 
 @defer.inlineCallbacks
-def crawl(runner, search_url):
-    yield runner.crawl(SearchResultsCrawler, name="search_crawler", search_url=search_url,
-                       output_file_name=SEARCH_RESULTS_FN)
+def crawl():
+    is_finished = True
+    while True:
+        root = tk.Tk()
 
-    # Load new game list
-    new_game_list = get_new_game_list(SEARCH_RESULTS_FN)
+        root.geometry('550x250')
+        root.title("Game Picker")
 
-    yield runner.crawl(NewGameInfoCrawler, name="new_game_info_crawler", new_game_list=new_game_list,
-                       output_file_name=NEW_GAMES_INFO_FN)
+        Type = GAME_TAGS.keys()
+        Platform = PLATFORMS
+
+        _type = CheckbuttonList(root, "Type", Type)
+        _type.place(x=10, y=10)
+
+        platform = CheckbuttonList(root, "Platform", Platform)
+        platform.place(x=10, y=100)
+
+        price_label = tk.Label(root, text="max price($)")
+        price_label.place(x=10, y=150)
+        _range = tk.Scale(root, from_=0, to=200, orient=tk.HORIZONTAL, length=500)
+        _range.place(x=10, y=170)
+
+        submit = tk.Button(root, text="Find", command=lambda: find(_range, _type, platform, root))
+        submit.place(x=10, y=220)
+
+        root.mainloop()
+        yield runner.crawl(SearchResultsCrawler, name="search_crawler", search_url=search_url,
+                           output_file_name=SEARCH_RESULTS_FN)
+
+        # Load new game list
+        new_game_list = get_new_game_list(SEARCH_RESULTS_FN)
+
+        yield runner.crawl(NewGameInfoCrawler, name="new_game_info_crawler", new_game_list=new_game_list,
+                           output_file_name=NEW_GAMES_INFO_FN)
+        process(price, platforms)
+
     reactor.stop()
 
 
@@ -113,14 +132,14 @@ def main():
     price.place(x=10, y=150)
     _range = tk.Scale(root, from_=0, to=200, orient=tk.HORIZONTAL, length=500)
     _range.place(x=10, y=170)
-
-    submit = tk.Button(root, text="Find", command=lambda: find(_range, _type, platform))
+    submit = tk.Button(root, text="Find", command=lambda: find(_range, _type, platform, root))
     submit.place(x=10, y=220)
 
     root.mainloop()
 
 
-def find(_range, _type, platform):
+def find(_range, _type, platform, root):
+    global_variables = globals()
     a = _range.get()
     type_list = _type.cb_values
     res_types = []
@@ -134,9 +153,24 @@ def find(_range, _type, platform):
         if v.get():
             res_platforms.append(k)
 
-    process(search_url=get_search_link(res_types), price=a, platform_list=res_platforms)
+    root.destroy()
+    global_variables['search_url'] = get_search_link(res_types)
+    global_variables['price'] = a
+    global_variables['platforms'] = res_platforms
 
 
 if __name__ == '__main__':
+    search_url = None
+    price = None
+    platforms = None
     nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
-    main()
+    setting = get_project_settings()
+    setting['FEED_EXPORT_ENCODING'] = 'utf-8'
+    setting['FEED_STORAGES_BASE'] = {
+        '': 'custom_report_file.CustomFileFeedStorage',
+        'file': 'custom_report_file.CustomFileFeedStorage',
+    }
+    configure_logging()
+    runner = CrawlerRunner(setting)
+    crawl()
+    reactor.run()

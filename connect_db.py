@@ -139,6 +139,7 @@ def turn_to_matrix(game_list, platform_list, price):
             placeholders1 = ','.join('%s' for i in game_list)
             placeholders2 = ','.join('%s' for i in platform_list)
             query = "select * from game_recommend.classified_data where `name` in ({}) and `platform` in ({}) and `price` <= {};".format(placeholders1, placeholders2, price)
+            print(query)
             cs.execute(query, game_list + platform_list)
             matrix = []
             id_list = []
