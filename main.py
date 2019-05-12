@@ -40,15 +40,19 @@ def process(search_url, price, platform_list):
         insert(CLASSIFIED_RESULT_FN)
 
     # TOPSIS
-    matrix = turn_to_matrix()
+    with open(SEARCH_RESULTS_FN, mode='r') as f:
+        game_li = json.load(f)
+        f.close()
+    game_list = [game["name"] for game in game_li]
+    matrix = turn_to_matrix(game_list, platform_list, price)
     result = topsis(matrix, len(matrix), TOPSIS_WEIGHT, NO_ATTRIBUTES)
     print('Result: ', result)
-    # try:
-    #     os.remove(NEW_GAMES_INFO_FN)
-    #     os.remove("search_results.json")
-    #     os.remove("classified_result.json")
-    # except FileNotFoundError:
-    #     print("")
+    try:
+        os.remove(NEW_GAMES_INFO_FN)
+        os.remove("search_results.json")
+        os.remove("classified_result.json")
+    except FileNotFoundError:
+        print("")
 
 
 def get_new_game_list(fn):
@@ -117,6 +121,14 @@ def find(_range, _type, platform):
             res_platforms.append(k)
 
     process(search_url=get_search_link(res_types), price=a, platform_list=res_platforms)
+
+# def get_params(_range, platform):
+#     platform_list = platform.cb_values
+#     res_platforms = []
+#     for k, v in platform_list.items():
+#         if v.get():
+#             res_platforms.append(k)
+#     return (_range.get(), res_platforms)
 
 
 if __name__ == '__main__':

@@ -125,25 +125,27 @@ def insert(classified_result_fn):
                         insert into game_recommend.classified_data(url, name, price, platform, metascore, userscore, total,  positive)
                         values
                             ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');                  
-                    """.format(str(x['url']), str(x['name']), float(x['price']) / 100, x['platform'],
+                    """.format(str(x['url']), str(x['name']), float(x['price']) / 23040, x['platform'],
                                float(x['metascore']), float(x['userscore']), int(x['Total']), int(x['Positive']))
-                    # print(query_insert)
                     cs.execute(query_insert)
     finally:
         connection.close()
 
 
-def turn_to_matrix():
+def turn_to_matrix(game_list, platform_list, price):
     try:
         connection = get_connect()
         with connection.cursor() as cs:
             # query = "select * from game_recommend.classified_data where `platform` = '{}' and `price` between '{}' and '{}'"
-            query = "select * from game_recommend.classified_data where `platform` = 'PS4'"
-            cs.execute(query)
-            # print(cs.rowcount)
-            # matrix = np.empty((cs.rowcount, 4))
+            # a_list = ['Dota 2', 'Counter-Strike: Global Offensive', "PLAYERUNKNOWN'S BATTLEGROUNDS", "Tom Clancy's Rainbow Six® Siege"]
+            # b_list = ['PC', 'XONE']
+            # c = 100
+            
+            placeholders1 = ','.join('%s' for i in game_list)
+            placeholders2 = ','.join('%s' for i in platform_list)
+            query = "select * from game_recommend.classified_data where `name` in ({}) and `platform` in ({}) and `price` <= {};".format(placeholders1, placeholders2, price)
+            cs.execute(query, game_list + platform_list)
             matrix = []
-            # i = 0
             for row in cs:
                 avg_score = (float(row[5]) / 10 + float(row[6])) / 2
                 if float(row[7]) != 0:
@@ -151,9 +153,7 @@ def turn_to_matrix():
                 else:
                     pos = 0
                 matrix.append([float(row[3]), avg_score, float(row[7]), pos])
-                # i += 1 
-            # print (matrix[0][0])
-            # print (len(matrix))
+            print (matrix)
             return matrix
 
     finally:
