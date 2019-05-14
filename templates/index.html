@@ -47,26 +47,18 @@
                 <label>Type</label>
                 <select class="form-control select2" multiple="multiple" data-placeholder="Select Type"
                         style="width: 100%;" name="typ" id="typ">
-                  <option value="Action">Action</option>
-                  <option value="Action">Arcade</option>
-                  <option value="Action">FPS</option>
-                  <option value="Action">MOBA</option>
-                  <option value="Action">Scary</option>
-                  <option value="Action">Kid</option>
-                  <option value="Action">Indle</option>
+                        {% for item in typeList %}
+                        <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
                 </select>
               </div>
               <div class="form-group">
                 <label>Platform</label>
                 <select class="form-control select2" multiple="multiple" data-placeholder="Select Platform"
                         style="width: 100%;" name="plat" id="plat">
-                  <option value="PC">PC</option>
-                  <option value="X360">X360</option>
-                  <option value="Switch">Switch</option>
-                  <option value="PS3">PS3</option>
-                  <option value="PS4">PS4</option>
-                  <option value="Android">Android</option>
-                  <option value="IOS">IOS</option>
+                        {% for item in platformList %}
+                        <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
                 </select>
               </div>
               <div class="form-group">
