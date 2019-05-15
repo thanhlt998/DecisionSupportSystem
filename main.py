@@ -67,6 +67,7 @@ def process(search_url, price, platform_list):
         os.remove("classified_result.json")
     except FileNotFoundError:
         print("")
+    return res
 
 
 def get_new_game_list(fn):

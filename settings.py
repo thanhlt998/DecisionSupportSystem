@@ -4,7 +4,7 @@ MAX_NO_SEARCH_RESULT = 100
 TOKENIZER_PATH = 'tokenizer.pickle'
 MODEL_PATH = 'model_improvement-03-0.90.h5'
 CLASSIFIED_RESULT_FN = 'classified_result.json'
-TOPSIS_WEIGHT = [0.3, 0.2, 0.2, 0.15]
+TOPSIS_WEIGHT = [0.3, 0.2, 0.25, 0.25]
 NO_ATTRIBUTES = 4
 # json_path = 'home/Downloads/game.json'
 

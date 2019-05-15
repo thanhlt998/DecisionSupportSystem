@@ -1,5 +1,5 @@
 import pymysql.cursors
-import json
+import json, math
 
 # import numpy as np
 
@@ -125,7 +125,7 @@ def insert(classified_result_fn):
                         insert into game_recommend.classified_data(url, name, price, platform, metascore, userscore, total,  positive)
                         values
                             ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');                  
-                    """.format(str(x['url']), str(x['name']), float(x['price']) / 23040, x['platform'],
+                    """.format(str(x['url']), str(x['name']), float(x['price']) / 2304000, x['platform'],
                                float(x['metascore']), float(x['userscore']), int(x['Total']), int(x['Positive']))
                     cs.execute(query_insert)
     finally:
@@ -139,7 +139,7 @@ def turn_to_matrix(game_list, platform_list, price):
             placeholders1 = ','.join('%s' for i in game_list)
             placeholders2 = ','.join('%s' for i in platform_list)
             query = "select * from game_recommend.classified_data where `name` in ({}) and `platform` in ({}) and `price` <= {};".format(placeholders1, placeholders2, price)
-            print(query)
+            # print(query)
             cs.execute(query, game_list + platform_list)
             matrix = []
             id_list = []
@@ -149,7 +149,7 @@ def turn_to_matrix(game_list, platform_list, price):
                     pos = float(row[8]) / float(row[7])
                 else:
                     pos = 0
-                matrix.append([float(row[3]), avg_score, float(row[7]), pos])
+                matrix.append([1 / math.exp(float(row[3])), avg_score, float(row[7]), pos])
                 id_list.append(row[0])
             print(cs.rowcount)
             return (matrix, id_list)

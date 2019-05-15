@@ -50,6 +50,7 @@ def topsis(matrix, optionNum, w, wNum):
         c.append(sM[i] / (sP[i] + sM[i]))
 
     return c
+    
 
 
 def bestPrice(matrix):
