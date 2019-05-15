@@ -59,7 +59,7 @@ def process(search_url, price, platform_list):
     dictionary = dict(zip(id_list, result))
     dictionary = sorted(dictionary.items(), key=operator.itemgetter(1), reverse=True)
     d = collections.OrderedDict(dictionary)
-    x = itertools.islice(d.items(), 0, 4)
+    x = itertools.islice(d.items(), 0, 5)
     key_list = []
     for key, value in x:
         key_list.append(key)

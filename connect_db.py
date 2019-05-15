@@ -1,5 +1,5 @@
 import pymysql.cursors
-import json
+import json, math
 
 # import numpy as np
 
@@ -149,7 +149,7 @@ def turn_to_matrix(game_list, platform_list, price):
                     pos = float(row[8]) / float(row[7])
                 else:
                     pos = 0
-                matrix.append([float(row[3]), avg_score, float(row[7]), pos])
+                matrix.append([1 / math.exp(float(row[3])), avg_score, float(row[7]), pos])
                 id_list.append(row[0])
             print(cs.rowcount)
             return (matrix, id_list)
