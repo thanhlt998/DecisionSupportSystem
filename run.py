@@ -1,8 +1,10 @@
 from flask import Flask, render_template, redirect, url_for, request
 from model import *
+from settings import *
+from NLP import NLP
 
 app = Flask(__name__, static_folder='templates/static')
- 
+
  
 # @app.route('/')
 # def welcome():

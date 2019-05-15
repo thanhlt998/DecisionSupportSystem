@@ -100,6 +100,7 @@ class NLP:
                 list_sentences_test = data["test_review"]
                 list_tokenized_test = self.tokenizer.texts_to_sequences(list_sentences_test)
                 X_te = pad_sequences(list_tokenized_test, maxlen=maxlen)
+                # print(X_te)
                 prediction = self.model.predict(X_te)
                 for i in range(len(prediction)):
                     if prediction[i] > 0.5:

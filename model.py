@@ -26,6 +26,7 @@ def process(search_url, price, platform_list):
     # print(search_url, price, platform_list)
 
     # Search
+   
     setting = get_project_settings()
     setting['FEED_EXPORT_ENCODING'] = 'utf-8'
     setting['FEED_STORAGES_BASE'] = {
@@ -39,10 +40,13 @@ def process(search_url, price, platform_list):
 
     # Classify
     if os.stat(NEW_GAMES_INFO_FN).st_size != 0:
+        nlp = NLP(TOKENIZER_PATH, MODEL_PATH)
         nlp.classify_comments(NEW_GAMES_INFO_FN)
+        del nlp
 
         # Import new game into database
         insert(CLASSIFIED_RESULT_FN)
+    
 
     # TOPSIS
     with open(SEARCH_RESULTS_FN, mode='r') as f:
