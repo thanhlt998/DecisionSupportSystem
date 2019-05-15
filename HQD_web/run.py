@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request
- 
+from main import *
+
 app = Flask(__name__, static_folder='templates/static')
  
  
@@ -17,9 +18,10 @@ def result():
         price = int(request.form['price'])
         platforms = request.form.getlist('plat')
         types = request.form.getlist('typ')
-        # list = process(price, platforms, types)
+        listGame = process(search_url=get_search_link(res_types), price=a, platform_list=res_platforms)
+       
         res = [(444, 'https://store.steampowered.com/app/49520/Borderlands_2/?snr=1_7_7_230_150_2', 'Borderlands 2', 19.99, 'PC', 89.0, 8.2, 555, 373),(571, 'https://store.steampowered.com/app/306130/The_Elder_Scrolls_Online/?snr=1_7_7_230_150_1', 'The Elder Scrolls® Online', 19.99, 'PC', 71.0, 5.8, 855, 457), (692, 'https://store.steampowered.com/app/22380/Fallout_New_Vegas/?snr=1_7_7_230_150_7', 'Fallout: New Vegas', 9.99, 'PC', 84.0, 8.7, 636, 467), (1598, 'https://store.steampowered.com/app/620/Portal_2/?snr=1_7_7_230_150_8', 'Portal 2', 9.99, 'PC', 95.0, 9.0, 1827, 1418)]
-        return render_template('result.html', error=error, result_list=res)
+        return render_template('result.html', error=error, result_list=listGame)
       
 
 
